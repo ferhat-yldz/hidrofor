@@ -1,17 +1,24 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import ScrollToTop from "@/components/ScrollToTop";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "GAP Sıhhi Tesisat | Malatya Su Tesisatı & Arıza Onarımı",
-  description: "Malatya'da cihazlı su kaçak tespiti, detaylı kombi bakımı, ilaçsız darbeli petek temizliği, termosifon ve güneş enerji sistemleri kurulumu. 7/24 hizmetinizdeyiz.",
-  keywords: ["malatya su tesisatı", "malatya su arızası", "su tesisatçısı malatya", "kombi bakımı malatya", "petek temizliği malatya", "su kaçağı tespiti cihazlı malatya"],
-  authors: [{ name: "GAP Yapı Sıhhi Tesisat" }],
+  title: "AK DALGIÇ POMPA & MEKANİK | Malatya Hidrofor, Dalgıç Pompa ve Mekanik Çözümler",
+  description: "Malatya ve çevresinde 7/24 profesyonel hidrofor, kuyu sondaj ve pompa sistemleri. 15+ yıllık deneyimle kesintisiz su basıncı garantisi.",
+  keywords: ["Malatya Hidrofor", "Malatya Dalgıç Pompa Tamiri", "Yeşilyurt Tesisatçı", "hidrofor kurulumu malatya", "kuyu sondaj malatya", "su tesisatı malatya"],
+  authors: [{ name: "AK DALGIÇ POMPA & MEKANİK" }],
+  icons: {
+    icon: "/images/logo.png",
+    apple: "/images/logo.png",
+  },
   openGraph: {
-    title: "GAP Sıhhi Tesisat | Malatya Su Tesisatı & Arıza Onarımı",
-    description: "Malatya profesyonel sıhhi tesisat hizmetleri.",
+    title: "AK DALGIÇ POMPA & MEKANİK | Malatya Hidrofor, Dalgıç Pompa ve Mekanik Çözümler",
+    description: "Malatya ve çevresinde 7/24 profesyonel hidrofor, kuyu sondaj ve pompa sistemleri. 15+ yıllık deneyimle kesintisiz su basıncı garantisi.",
     locale: "tr_TR",
     type: "website",
   },
@@ -23,9 +30,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="tr">
-      <body className={inter.className} suppressHydrationWarning>
-        {children}
+    <html lang="tr" className="scroll-smooth">
+      <body className={`${inter.className} flex flex-col min-h-screen`} suppressHydrationWarning>
+        <Header />
+        <main className="flex-1">
+          {children}
+        </main>
+        <Footer />
+        <ScrollToTop />
       </body>
     </html>
   );
