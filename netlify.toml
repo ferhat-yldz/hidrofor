@@ -1,0 +1,5 @@
+# Next.js Runtime: publish must NOT be `out` unless you use `output: "export"`.
+# See https://github.com/netlify-templates/next-platform-starter/blob/main/netlify.toml
+[build]
+  command = "npm run build"
+  publish = ".next"
