@@ -1,7 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { servicesData } from "@/config/data";
+import { getServiceRecords } from "@/lib/services";
+import { getSite, telHref } from "@/lib/site";
 import { notFound } from "next/navigation";
+
+export function generateStaticParams() {
+  return getServiceRecords().map((s) => ({ slug: s.slug }));
+}
 import {
   Phone, ChevronRight, ArrowLeft, CheckCircle
 } from "lucide-react";
@@ -9,6 +15,7 @@ import {
 export default async function ServiceDetail({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
   const slug = resolvedParams.slug;
+  const { contact } = getSite();
   const service = servicesData.find((s) => s.slug === slug);
 
   if (!service) {
@@ -61,8 +68,8 @@ export default async function ServiceDetail({ params }: { params: Promise<{ slug
                   <h4 className="text-xl font-black text-slate-900 mb-2">Hemen Destek Alın</h4>
                   <p className="text-slate-600 font-medium text-sm">Uzman ekibimiz {service.title} konusunda anında yardımcı olmaya hazır.</p>
                 </div>
-                <a href="tel:+905433363944" className="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors shrink-0 flex items-center gap-2">
-                  <Phone className="w-5 h-5" /> 0543 336 39 44
+                <a href={telHref(contact.phoneE164)} className="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors shrink-0 flex items-center gap-2">
+                  <Phone className="w-5 h-5" /> {contact.phoneDisplay}
                 </a>
               </div>
             </div>

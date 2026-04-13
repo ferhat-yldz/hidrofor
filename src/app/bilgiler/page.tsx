@@ -4,31 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { Phone, BookOpen, ChevronRight } from "lucide-react";
 import { servicesData } from "@/config/data";
+import { getSite, telHref } from "@/lib/site";
+import { getArticles } from "@/lib/pages";
 
 export default function Bilgiler() {
-  const articles = [
-    {
-      id: "hidrofor-basinci",
-      category: "Rehber",
-      title: "Hidrofor Basıncı Neden Düşer?",
-      content: "Hidrofor sistemlerinde en sık karşılaşılan sorunlardan biri basıncın aniden düşmesi veya dalgalanmasıdır. Bunun temel sebepleri arasında genleşme tankının zarının (membran) patlaması, sistemde hava dengesizliği veya şebeke su basıncının aşırı düşük olması yer alır. Ayrıca basınç şalterinin oksitlenmesi veya ayarının bozulması da pompanın doğru zamanda devreye girmemesine neden olur. Bu durumlarda tankın hava basınç kontrolü yapılmalı ve membran yırtıksa değiştirilmelidir. Evde kendi başınıza yapabileceğiniz ilk şey gösterge saatindeki (manometre) basınç değerini kontrol etmektir.",
-      image: "/images/galeri/galeri-1.jpg"
-    },
-    {
-      id: "periyodik-bakim-tasarrufu",
-      category: "Tasarruf",
-      title: "Periyodik Bakım Tasarruf Sağlar Mı?",
-      content: "Kesinlikle evet. Zamanla kireçlenen pompalar, paslanan motor rulmanları ve dengesi bozulan genleşme tankları, sistemi olması gerekenden çok daha fazla yorar. Zorlanan bir motor, suyu basmak için normalden iki kat daha fazla elektrik enerjisi çekebilir. Ayrıca sızdıran çekvalfler nedeniyle hidrofor sürekli boşuna çalışır. Yılda bir kez yapılan detaylı periyodik bakım (pano kontaklarının temizlenmesi, rulman yağlaması ve basınç ayarları) sistemin ilk günkü verimiyle çalışıp elektrik faturalarından ciddi bir tasarruf etmenizi sağlar.",
-      image: "/images/galeri/galeri-2.jpg"
-    },
-    {
-      id: "motor-yanmasi",
-      category: "Teknik Bilgi",
-      title: "Motor Neden Yanar ve Nasıl Sarılır?",
-      content: "Dalgıç ve hidrofor motorlarının yanma sebepleri genellikle düşük/yüksek elektrik voltajı, panodaki termik röle arızaları, susuz çalışma ya da içine su kaçması (izolasyon hatası) dır. Motor yandığında sistem kilitlenir. Ak Dalgıç Pompa olarak, yanmış motorları yerinden söküyor ve tesisimizde karkas izolasyonu, bobin sarımı ve profesyonel vernik kurutma teknolojisiyle yeniden hayata döndürüyoruz. Doğru kalite bakır tel kullanımı, motorun fabrikasyon standartlarda, hatta bazen eskisinden daha dayanıklı şekilde çalışmasını sağlar.",
-      image: "/images/galeri/galeri-3.jpg"
-    }
-  ];
+  const { contact } = getSite();
+  const articles = getArticles();
 
   return (
     <div className="bg-slate-50 font-sans text-slate-900 pb-20 md:pb-0">
@@ -113,7 +94,7 @@ export default function Bilgiler() {
              <div className="absolute top-[-50%] right-[-10%] w-64 h-64 bg-white rounded-full blur-[80px] opacity-20"></div>
              <h3 className="text-3xl font-black mb-4">Sisteminizde farklı bir arıza mı var?</h3>
              <p className="text-blue-100 text-lg font-medium mb-8">Ücretsiz arıza tespiti ve danışmanlık hizmeti almak için bizi 7/24 arayabilirsiniz.</p>
-             <a href="tel:+905433363944" className="inline-flex items-center gap-3 bg-white text-blue-600 px-8 py-4 rounded-xl font-black text-lg shadow-xl hover:bg-slate-50 transition-colors">
+             <a href={telHref(contact.phoneE164)} className="inline-flex items-center gap-3 bg-white text-blue-600 px-8 py-4 rounded-xl font-black text-lg shadow-xl hover:bg-slate-50 transition-colors">
                 <Phone className="w-6 h-6" /> Hemen Ara
              </a>
           </div>

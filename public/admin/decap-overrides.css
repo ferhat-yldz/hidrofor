@@ -1,0 +1,62 @@
+/* AK Panel — Decap CMS kabuğu: daha okunaklı, düzenli görünüm (#nc-root içi) */
+
+#ak-cms-wrap #nc-root {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  color: #0f172a;
+}
+
+#ak-cms-wrap #nc-root * {
+  box-sizing: border-box;
+}
+
+#ak-cms-wrap #nc-root a:focus-visible,
+#ak-cms-wrap #nc-root button:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+#ak-cms-wrap #nc-root input,
+#ak-cms-wrap #nc-root textarea,
+#ak-cms-wrap #nc-root select {
+  font-size: 14px !important;
+  border-radius: 8px !important;
+}
+
+#ak-cms-wrap #nc-root input[type="search"] {
+  min-height: 2.25rem;
+  padding-left: 0.65rem !important;
+  padding-right: 0.65rem !important;
+}
+
+#ak-cms-wrap #nc-root button {
+  border-radius: 8px;
+}
+
+#ak-cms-wrap #nc-root a {
+  text-underline-offset: 3px;
+}
+
+/* Liste / kart alanlarında biraz nefes */
+#ak-cms-wrap #nc-root ul,
+#ak-cms-wrap #nc-root ol {
+  padding-inline-start: 1.15rem;
+}
+
+/* İnce kaydırma çubuğu (WebKit) */
+#ak-cms-wrap #nc-root ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+#ak-cms-wrap #nc-root ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+#ak-cms-wrap #nc-root ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+  background-clip: padding-box;
+}

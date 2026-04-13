@@ -1,0 +1,44 @@
+{
+  "items": [
+    {
+      "image": "/images/galeri/galeri-1.jpg",
+      "title": "Tamamlanan iş #1",
+      "tag": "REFERANS"
+    },
+    {
+      "image": "/images/galeri/galeri-2.jpg",
+      "title": "Tamamlanan iş #2",
+      "tag": "REFERANS"
+    },
+    {
+      "image": "/images/galeri/galeri-3.jpg",
+      "title": "Tamamlanan iş #3",
+      "tag": "REFERANS"
+    },
+    {
+      "image": "/images/galeri/galeri-4.jpg",
+      "title": "Tamamlanan iş #4",
+      "tag": "REFERANS"
+    },
+    {
+      "image": "/images/galeri/galeri-5.jpg",
+      "title": "Tamamlanan iş #5",
+      "tag": "REFERANS"
+    },
+    {
+      "image": "/images/galeri/galeri-6.jpg",
+      "title": "Tamamlanan iş #6",
+      "tag": "REFERANS"
+    },
+    {
+      "image": "/images/galeri/galeri-7.jpg",
+      "title": "Tamamlanan iş #7",
+      "tag": "REFERANS"
+    },
+    {
+      "image": "/images/galeri/galeri-8.jpg",
+      "title": "Tamamlanan iş #8",
+      "tag": "REFERANS"
+    }
+  ]
+}

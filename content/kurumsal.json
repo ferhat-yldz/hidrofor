@@ -1,0 +1,24 @@
+{
+  "hero": {
+    "backgroundImage": "https://images.unsplash.com/photo-1542013936693-884638332954?auto=format&fit=crop&q=80&w=2600",
+    "title": "Kurumsal Biyografi",
+    "subtitle": "Sektöre yıllarını vermiş, güven ve kaliteyi öncelik sayan bir anlayışla Malatya'ya hizmet ediyoruz."
+  },
+  "founder": {
+    "image": "/images/team/kerem-akarslan.jpg.png",
+    "imageAlt": "M. Kerem Akarslan",
+    "badge": "Firma Kurucusu",
+    "name": "M. Kerem Akarslan",
+    "role": "Uzman Teknisyen & Dalgıç Pompa Ustası"
+  },
+  "hikaye": {
+    "baslik": "Hikayemiz",
+    "girisParagrafi": "Meslek hayatına yıllar önce çıraklıktan başlayarak hidrofor, kuyu sondaj ve dalgıç pompa sistemlerinin her detayında tecrübe kazanan M. Kerem Akarslan, işin mutfağından yetişmiş donanımlı bir tesisat ve otomasyon uzmanıdır. Yılların verdiği birikimi profesyonel bir çatı altında toplamak amacıyla Ak Dalgıç Pompa & Mekanik firmasını kurarak Malatya ve çevresinde sektöre yeni bir vizyon kazandırmıştır.",
+    "alinti": "Bizim işimiz sadece bozulanı tamir etmek değil, su gibi hayati bir kaynağın kesintisiz ve verimli şekilde akmasını sağlayan uzun ömürlü sistemler inşa etmektir.",
+    "kapanisParagrafi": "Sektörde sağladığı %100 işçilik garantisi ve 7/24 esasına dayalı çalışma prensibiyle, tarımsal sulamadan endüstriyel tesislere, apartman ve sitelerden müstakil evlere kadar geniş bir yelpazede hizmet vermektedir. Panoların karmaşık otomasyonlarından, yer altındaki kuyu sistemlerine kadar her alanda teknik hakimiyete sahip olan Kerem Usta, kaliteden ödün vermeyen yaklaşımı ile Malatya'nın aranan çözüm ortaklarından biri haline gelmiştir."
+  },
+  "istatistikler": [
+    { "deger": "15+", "etiket": "Yıllık Sektör Tecrübesi" },
+    { "deger": "1000+", "etiket": "Tamamlanan Proje" }
+  ]
+}

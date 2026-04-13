@@ -1,0 +1,90 @@
+{
+  "contact": {
+    "phoneE164": "+905433363944",
+    "phoneDisplay": "0543 336 39 44",
+    "email": "keremakarslan4@gmail.com",
+    "whatsappE164": "905433363944",
+    "whatsappMessage": "Merhaba,%20bilgi%20almak%20istiyorum.",
+    "addressLabel": "Yeşiltepe Yolu No: 28, Çavuşoğlu Mh.\nYeşilyurt / MALATYA",
+    "mapsQuery": "Yeşiltepe+Yolu+No:28,Yeşilyurt,Malatya"
+  },
+  "topBar": {
+    "text": "Malatya'nın Güvenilir Su Çözümleri | 7/24 Kesintisiz Hizmet",
+    "callToActionLabel": "Hemen Ara"
+  },
+  "agency": {
+    "nameLine": "Betsan",
+    "nameHighlight": "Teknoloji",
+    "tagline": "Geleceği Kodluyoruz",
+    "phoneE164": "+905479744444",
+    "phoneDisplay": "+90 547 974 44 44",
+    "email": "info@betsanglobal.com",
+    "address": "Bulgurlu Mah. Kızıltepe Sk. No:3/1 İç Kapı: B4 Battalgazi/Malatya"
+  },
+  "faqs": [
+    {
+      "q": "Hidrofor bakımı ne sıklıkla yapılmalı?",
+      "a": "Sistemin ömrünü uzatmak ve enerji tasarrufu sağlamak için yılda bir kez detaylı kontrol önerilir."
+    },
+    {
+      "q": "Arıza durumunda ne kadar sürede ulaşıyorsunuz?",
+      "a": "Malatya merkez ve çevre ilçelere hızlı servis garantisi ile acil müdahale ekibimiz en kısa sürede ulaşmaktadır."
+    },
+    {
+      "q": "Pompa montajı sonrası garanti veriyor musunuz?",
+      "a": "Evet, tüm teknik destek ve montaj işlemlerimiz %100 garantili işçilik prensibiyle gerçekleştirilmektedir."
+    },
+    {
+      "q": "Fiyatlar neye göre değişir?",
+      "a": "Kaçak tespitine veya derin kuyunun sondaj ihtiyacına göre yerinde arıza tespiti sonrası en uygun fiyat verilmektedir."
+    },
+    {
+      "q": "Motor sarım işlemi kaç gün sürüyor?",
+      "a": "Fabrikasyon standartlarında orijinal izolasyonlarla yapılan sarım işlemleri arızanın durumuna göre ortalama 1-2 gün sürmektedir."
+    },
+    {
+      "q": "Depomdaki su basıncı neden sürekli dalgalanıyor?",
+      "a": "Genellikle genleşme tankındaki membran yırtığı veya basınç şalteri ayarsızlığından kaynaklanır. Hızlıca tamir edilebilir."
+    },
+    {
+      "q": "Kuyu sondajı için keşif ücretli mi?",
+      "a": "Hayır. Uzman ekibimiz jeolojik yapıya uygun keşifleri tamamen ücretsiz olarak yapmaktadır."
+    },
+    {
+      "q": "Pano tamamen yandıysa yenilenmesi mi gerekir?",
+      "a": "Hasarın boyutuna göre sadece kontaktör/röle takımı değişebilir ya da yepyeni akıllı dijital pano eklenebilir."
+    }
+  ],
+  "reviews": [
+    {
+      "name": "Ali Rıza Coşkun",
+      "body": "Gece hidrofor arızalandı ve tüm site susuz kaldı. Çok kısa sürede ulaşıp hızlıca onardılar. Çok teşekkürler.",
+      "rating": 5,
+      "location": "Yeşilyurt"
+    },
+    {
+      "name": "Mehmet Kılıç",
+      "body": "Kuyu pompası yanmıştı, yenisinin montajını kusursuz ve oldukça profesyonelce tamamladılar. Güvenilir hizmet.",
+      "rating": 5,
+      "location": "Battalgazi"
+    },
+    {
+      "name": "Ayberk Şahin",
+      "body": "Pano arızası yüzünden sürekli sigorta atıyordu. Kerem Usta gelip pano tamirini ustalıkla çözdü. Kesinlikle tavsiye ederim.",
+      "rating": 5,
+      "location": "Doğanşehir"
+    },
+    {
+      "name": "Süleyman Aksoy",
+      "body": "Sondaj suyu basıncı hep düşüktü, genleşme tankını söküp değiştirdiler şu an tazyikli su alıyoruz. Harika işçilik.",
+      "rating": 5,
+      "location": "Akçadağ"
+    },
+    {
+      "name": "Cemil Demir",
+      "body": "Sabahın 4'ünde bahçe motoru su basmayı kesti. Ustayı aradım ve anında geldi. İşinin ehline denk gelmek büyük şans.",
+      "rating": 5,
+      "location": "Darende"
+    }
+  ]
+}

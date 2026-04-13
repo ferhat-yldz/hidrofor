@@ -1,0 +1,10 @@
+{
+  "bolumEtiketi": "ÇÖZÜM ORTAKLARIMIZ",
+  "markalar": [
+    { "ad": "ETNA", "iconKey": "shieldCheck", "renkSinifi": "text-red-500" },
+    { "ad": "ÜSTÜNEL", "iconKey": "award", "renkSinifi": "text-blue-600" },
+    { "ad": "ALARKO", "iconKey": "droplet", "renkSinifi": "text-cyan-500" },
+    { "ad": "YILDIZSU", "iconKey": "activity", "renkSinifi": "text-yellow-500" },
+    { "ad": "PEDROLLO", "iconKey": "zap", "renkSinifi": "text-green-600", "italik": true }
+  ]
+}

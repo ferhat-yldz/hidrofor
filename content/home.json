@@ -1,0 +1,74 @@
+{
+  "hero": {
+    "badgeText": "M. Kerem Akarslan",
+    "titleLine1": "AK",
+    "titleHighlight": "HİDROFOR",
+    "titleLine2": "Dalgıç Pompa",
+    "titleLine3": "Ve Mekanik",
+    "heroImage": "/images/hero/ana-sayfa-hero.jpg",
+    "heroImageAlt": "Hidrofor ve Pompa Sistemleri",
+    "heroCaption": "Yüksek Verimli Hidrofor ve Pompa Sistemleri",
+    "floatingStatValue": "1000+",
+    "floatingStatLabel": "Mutlu Müşteri"
+  },
+  "heroSubtitle": "Malatya ve çevresinde 7/24 profesyonel hidrofor ve pompa çözümleri. Sisteminize en uygun çözümler ile uzman kadromuz her daim yanınızda.",
+  "trustBadges": [
+    { "metin": "7/24 Kesintisiz Hizmet" },
+    { "metin": "%100 Garantili İşçilik" },
+    { "metin": "Profesyonel Çözüm" },
+    { "metin": "15+ Yıl Tecrübe" }
+  ],
+  "hakkimizda": {
+    "eyebrow": "Farkımız",
+    "title": "SUYUNUZ GÜVENDE",
+    "description": "Ak Dalgıç Pompa olarak, yılların verdiği tecrübe ve uzman kadromuzla Malatya genelinde hidrofor ve pompa sistemleriniz için kalıcı çözümler üretiyoruz.",
+    "bullets": [
+      { "metin": "Profesyonel Kuyu Sondaj ve Etüt" },
+      { "metin": "Yerinde Arıza Tespiti ve Danışmanlık" },
+      { "metin": "Depo Hijyeni (Sağlık Bakanlığı Standartlarında)" },
+      { "metin": "Elektrofüzyon Kaynak İle Sızdırmaz Boru Birleştirme" }
+    ],
+    "ctaText": "Hakkımızda Daha Fazla Bilgi"
+  },
+  "bolgeler": {
+    "title": "Hizmet Verilen Bölgeler",
+    "description": "Acil altyapı donanımımız ile mesafeleri dert etmiyoruz. Profesyonel çözümler için bir telefon uzağınızdayız.",
+    "cards": [
+      {
+        "title": "Malatya Tüm İlçeler",
+        "description": "Battalgazi, Yeşilyurt, Doğanşehir (Tüm Merkez ve Çevre Mahalleler)"
+      },
+      {
+        "title": "7/24 Teknik Destek Ekibi",
+        "description": "Hidrofor kurulumu, dalgıç pompa ve diğer tüm mekanik taleplerinizde anında yola çıkıyoruz."
+      }
+    ]
+  },
+  "hizmetlerBaslik": {
+    "eyebrow": "Uzmanlık Alanlarımız",
+    "title": "Profesyonel Çözümler"
+  },
+  "galeriBaslik": {
+    "eyebrow": "İşlerimiz",
+    "title": "Tamamlanan İşler & Galeri"
+  },
+  "galeriKart": {
+    "varsayilanEtiket": "REFERANS"
+  },
+  "hizmetKartCta": "Hizmet Detayı İçin Tıklayın",
+  "testimonials": {
+    "title": "Müşterilerimiz Neler Diyor?",
+    "subtitle": "Yüzlerce başarılı servis ve mutlu müşteri ile güveniniz teminatımızdır.",
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1621250262100-362f6b8a8b13?q=80&w=2600&auto=format&fit=crop"
+  },
+  "bilgiKosesi": {
+    "eyebrow": "Bilgibank",
+    "title": "Usta'dan Öneriler (Blog)",
+    "linkText": "Tüm Bilgileri Gör",
+    "anasayfaKartSayisi": 3
+  },
+  "sssBolumu": {
+    "baslik": "Sık Sorulan Sorular",
+    "altBaslik": "Hizmetlerimizle ilgili aklınıza takılan sorulara en net yanıtlarımız."
+  }
+}

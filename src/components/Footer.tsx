@@ -2,8 +2,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { Phone, Mail, MapPin, ChevronRight } from "lucide-react";
 import { servicesData } from "@/config/data";
+import { getSite, telHref, mapsHref } from "@/lib/site";
 
 export default function Footer() {
+  const { contact, agency } = getSite();
+  const addressLines = contact.addressLabel.split("\n");
+
   return (
     <footer id="iletisim" className="bg-slate-900 border-t border-slate-800 pt-20 pb-8 mt-10 text-slate-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -22,17 +26,22 @@ export default function Footer() {
             <ul className="space-y-6">
               <li className="flex items-start gap-4 font-medium text-slate-300">
                 <MapPin className="w-5 h-5 text-blue-500 shrink-0 mt-1" />
-                <a href="https://www.google.com/maps/search/?api=1&query=Yeşiltepe+Yolu+No:28,Yeşilyurt,Malatya" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors leading-relaxed text-sm">
-                  Yeşiltepe Yolu No: 28, Çavuşoğlu Mh.<br />Yeşilyurt / MALATYA
+                <a href={mapsHref(contact.mapsQuery)} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors leading-relaxed text-sm">
+                  {addressLines.map((line, i) => (
+                    <span key={i}>
+                      {line}
+                      {i < addressLines.length - 1 ? <br /> : null}
+                    </span>
+                  ))}
                 </a>
               </li>
               <li className="flex items-center gap-4 font-medium">
                 <Phone className="w-5 h-5 text-fire-red shrink-0" />
-                <a href="tel:+905433363944" className="hover:text-white transition-colors text-lg font-bold text-white">0543 336 39 44</a>
+                <a href={telHref(contact.phoneE164)} className="hover:text-white transition-colors text-lg font-bold text-white">{contact.phoneDisplay}</a>
               </li>
               <li className="flex items-center gap-4 font-medium">
                 <Mail className="w-5 h-5 text-blue-500 shrink-0" />
-                <a href="mailto:keremakarslan4@gmail.com" className="hover:text-white transition-colors text-[13px] sm:text-sm">keremakarslan4@gmail.com</a>
+                <a href={`mailto:${contact.email}`} className="hover:text-white transition-colors text-[13px] sm:text-sm">{contact.email}</a>
               </li>
             </ul>
           </div>
@@ -96,21 +105,23 @@ export default function Footer() {
               <div className="absolute -bottom-2 left-0 w-8 h-1 bg-blue-500 rounded-full"></div>
             </h4>
             
-            <div className="font-black text-white text-lg mb-1 tracking-tight">Betsan <span className="text-blue-500">Teknoloji</span></div>
-            <div className="text-[10px] uppercase tracking-widest text-slate-400 mb-5">Geleceği Kodluyoruz</div>
+            <div className="font-black text-white text-lg mb-1 tracking-tight">
+              {agency.nameLine} <span className="text-blue-500">{agency.nameHighlight}</span>
+            </div>
+            <div className="text-[10px] uppercase tracking-widest text-slate-400 mb-5">{agency.tagline}</div>
             
             <ul className="space-y-3 font-medium text-xs text-slate-400">
               <li className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-slate-500 shrink-0" />
-                <a href="tel:+905479744444" className="hover:text-white transition-colors">+90 547 974 44 44</a>
+                <a href={telHref(agency.phoneE164)} className="hover:text-white transition-colors">{agency.phoneDisplay}</a>
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-slate-500 shrink-0" />
-                <a href="mailto:info@betsanglobal.com" className="hover:text-white transition-colors">info@betsanglobal.com</a>
+                <a href={`mailto:${agency.email}`} className="hover:text-white transition-colors">{agency.email}</a>
               </li>
               <li className="flex items-start gap-2 pt-2 border-t border-slate-700/50 mt-2">
                 <MapPin className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
-                <span className="leading-relaxed text-[11px]">Bulgurlu Mah. Kızıltepe Sk. No:3/1 İç Kapı: B4 Battalgazi/Malatya</span>
+                <span className="leading-relaxed text-[11px]">{agency.address}</span>
               </li>
             </ul>
           </div>
@@ -125,7 +136,7 @@ export default function Footer() {
             <div className="flex gap-5 font-bold">
               <Link href="/" className="hover:text-white transition-colors">Ana Sayfa</Link>
               <a href="#" className="hover:text-white transition-colors">Gizlilik Politikası</a>
-              <a href="tel:+905433363944" className="hover:text-white transition-colors">Destek: 0543 336 39 44</a>
+              <a href={telHref(contact.phoneE164)} className="hover:text-white transition-colors">Destek: {contact.phoneDisplay}</a>
             </div>
           </div>
 

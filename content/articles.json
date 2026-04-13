@@ -1,0 +1,31 @@
+{
+  "articles": [
+    {
+      "id": "hidrofor-basinci",
+      "category": "Rehber",
+      "title": "Hidrofor Basıncı Neden Düşer?",
+      "content": "Hidrofor sistemlerinde en sık karşılaşılan sorunlardan biri basıncın aniden düşmesi veya dalgalanmasıdır. Bunun temel sebepleri arasında genleşme tankının zarının (membran) patlaması, sistemde hava dengesizliği veya şebeke su basıncının aşırı düşük olması yer alır. Ayrıca basınç şalterinin oksitlenmesi veya ayarının bozulması da pompanın doğru zamanda devreye girmemesine neden olur. Bu durumlarda tankın hava basınç kontrolü yapılmalı ve membran yırtıksa değiştirilmelidir. Evde kendi başınıza yapabileceğiniz ilk şey gösterge saatindeki (manometre) basınç değerini kontrol etmektir.",
+      "excerpt": "Genleşme tankınızın membranı patlamış veya sisteme hava dolmuş olabilir, doğru kalibrasyonla çözülür...",
+      "image": "/images/galeri/galeri-1.jpg",
+      "showOnHome": true
+    },
+    {
+      "id": "periyodik-bakim-tasarrufu",
+      "category": "Tasarruf",
+      "title": "Periyodik Bakım Tasarruf Sağlar Mı?",
+      "content": "Kesinlikle evet. Zamanla kireçlenen pompalar, paslanan motor rulmanları ve dengesi bozulan genleşme tankları, sistemi olması gerekenden çok daha fazla yorar. Zorlanan bir motor, suyu basmak için normalden iki kat daha fazla elektrik enerjisi çekebilir. Ayrıca sızdıran çekvalfler nedeniyle hidrofor sürekli boşuna çalışır. Yılda bir kez yapılan detaylı periyodik bakım (pano kontaklarının temizlenmesi, rulman yağlaması ve basınç ayarları) sistemin ilk günkü verimiyle çalışıp elektrik faturalarından ciddi bir tasarruf etmenizi sağlar.",
+      "excerpt": "Paslanmış ve yorulmuş motorlar çok yüksek devirlerde dahi basınç sağlamaz, gereksiz enerji tüketir...",
+      "image": "/images/galeri/galeri-2.jpg",
+      "showOnHome": true
+    },
+    {
+      "id": "motor-yanmasi",
+      "category": "Teknik Bilgi",
+      "title": "Motor Neden Yanar ve Nasıl Sarılır?",
+      "content": "Dalgıç ve hidrofor motorlarının yanma sebepleri genellikle düşük/yüksek elektrik voltajı, panodaki termik röle arızaları, susuz çalışma ya da içine su kaçması (izolasyon hatası) dır. Motor yandığında sistem kilitlenir. Ak Dalgıç Pompa olarak, yanmış motorları yerinden söküyor ve tesisimizde karkas izolasyonu, bobin sarımı ve profesyonel vernik kurutma teknolojisiyle yeniden hayata döndürüyoruz. Doğru kalite bakır tel kullanımı, motorun fabrikasyon standartlarda, hatta bazen eskisinden daha dayanıklı şekilde çalışmasını sağlar.",
+      "excerpt": "Pano otomasyon arızası veya aşınma yüzünden yanan motorlar, titiz izolasyon ile fabrikasyon standartlarda...",
+      "image": "/images/galeri/galeri-3.jpg",
+      "showOnHome": true
+    }
+  ]
+}

@@ -1,0 +1,344 @@
+# AK Panel / Decap CMS
+# YEREL: npm run dev + npm run cms → http://localhost:3000/admin
+#   backend: proxy + decap-server (8081) → Decap’in ikinci giriş ekranı çıkmaz.
+# NETLIFY: Aşağıdaki backend bloğunu şununla değiştirin; üstte local_backend YOK:
+#   backend:
+#     name: git-gateway
+#     branch: main
+#   + Netlify Identity + Git Gateway. AK Panel şifresi (admin) sadece ön kapıdır; gerçek güvenlik Identity’dedir.
+
+backend:
+  name: proxy
+  proxy_url: http://localhost:8081/api/v1
+  branch: main
+
+media_folder: public/images/uploads
+public_folder: /images/uploads
+
+# Arayüz dili (Decap yerleşik çevirileri; İçerikler / Medya / Koleksiyonlar vb.)
+locale: "tr"
+
+collections:
+  - name: sayfa_icerikleri
+    label: Sayfa içerikleri
+    files:
+      - label: Ana sayfa
+        name: ana_sayfa
+        file: content/home.json
+        fields:
+          - label: Hero (üst bölüm)
+            name: hero
+            widget: object
+            collapsed: false
+            fields:
+              - { label: Rozet metni (isim vb.), name: badgeText, widget: string }
+              - { label: Başlık satırı 1, name: titleLine1, widget: string }
+              - { label: Vurgulu kelime (mavi), name: titleHighlight, widget: string }
+              - { label: Başlık satırı 2, name: titleLine2, widget: string }
+              - { label: Başlık satırı 3, name: titleLine3, widget: string }
+              - label: Ana görsel yolu
+                name: heroImage
+                widget: string
+                hint: "/images/hero/... veya yüklediğiniz dosya yolu"
+              - { label: Görsel alt metni, name: heroImageAlt, widget: string }
+              - { label: Görsel üstü açıklama, name: heroCaption, widget: string }
+              - { label: Yan kart sayı, name: floatingStatValue, widget: string }
+              - { label: Yan kart etiket, name: floatingStatLabel, widget: string }
+          - { label: Hero alt paragraf, name: heroSubtitle, widget: text }
+          - label: Güven rozetleri
+            name: trustBadges
+            widget: list
+            summary: "{{fields.metin}}"
+            fields:
+              - { label: Metin, name: metin, widget: string }
+          - label: Hakkımızda (Farkımız)
+            name: hakkimizda
+            widget: object
+            collapsed: true
+            fields:
+              - { label: Üst etiket, name: eyebrow, widget: string }
+              - { label: Ana başlık, name: title, widget: string }
+              - { label: Paragraf, name: description, widget: text }
+              - label: Madde işaretli liste
+                name: bullets
+                widget: list
+                summary: "{{fields.metin}}"
+                fields:
+                  - { label: Satır, name: metin, widget: string }
+              - { label: Buton metni, name: ctaText, widget: string }
+          - label: Hizmet bölgeleri (koyu kutu)
+            name: bolgeler
+            widget: object
+            collapsed: true
+            fields:
+              - { label: Başlık, name: title, widget: string }
+              - { label: Açıklama, name: description, widget: text }
+              - label: Kartlar
+                name: cards
+                widget: list
+                fields:
+                  - { label: Kart başlığı, name: title, widget: string }
+                  - { label: Kart açıklaması, name: description, widget: text }
+          - label: Hizmetler bölüm başlığı
+            name: hizmetlerBaslik
+            widget: object
+            collapsed: true
+            fields:
+              - { label: Üst etiket, name: eyebrow, widget: string }
+              - { label: Ana başlık, name: title, widget: string }
+          - label: Galeri bölüm başlığı
+            name: galeriBaslik
+            widget: object
+            collapsed: true
+            fields:
+              - { label: Üst etiket, name: eyebrow, widget: string }
+              - { label: Ana başlık, name: title, widget: string }
+          - label: Galeri kart varsayılan etiketi
+            name: galeriKart
+            widget: object
+            collapsed: true
+            fields:
+              - { label: Varsayılan üst etiket, name: varsayilanEtiket, widget: string, hint: "Örn. REFERANS" }
+          - { label: Hizmet kartı CTA metni, name: hizmetKartCta, widget: string }
+          - label: Yorumlar arka planı
+            name: testimonials
+            widget: object
+            collapsed: true
+            fields:
+              - { label: Başlık, name: title, widget: string }
+              - { label: Alt başlık, name: subtitle, widget: text }
+              - label: Arka plan görsel URL
+                name: backgroundImageUrl
+                widget: string
+                hint: "Tam https://... adresi (Unsplash vb.)"
+          - label: Bilgi köşesi (blog önizleme)
+            name: bilgiKosesi
+            widget: object
+            collapsed: true
+            fields:
+              - { label: Üst etiket, name: eyebrow, widget: string }
+              - { label: Başlık, name: title, widget: string }
+              - { label: Tümünü gör linki, name: linkText, widget: string }
+              - label: Anasayfada kaç yazı
+                name: anasayfaKartSayisi
+                widget: number
+                value_type: int
+                min: 1
+                max: 12
+          - label: SSS bölümü
+            name: sssBolumu
+            widget: object
+            collapsed: true
+            fields:
+              - { label: Başlık, name: baslik, widget: string }
+              - { label: Alt başlık, name: altBaslik, widget: text }
+
+      - label: Galeri — tamamlanan işler
+        name: galeri
+        file: content/gallery.json
+        fields:
+          - label: İş kayıtları (yeni iş bitince buraya satır ekleyin)
+            name: items
+            widget: list
+            summary: "{{fields.title}}"
+            fields:
+              - label: Fotoğraf yolu
+                name: image
+                widget: string
+                hint: "/images/galeri/... veya Medya’dan yükleyip yolu yapıştırın"
+              - { label: Başlık (hover’da görünür), name: title, widget: string }
+              - label: Üst etiket
+                name: tag
+                widget: string
+                required: false
+                hint: "Boş bırakırsanız ana sayfadaki varsayılan kullanılır"
+
+      - label: Bilgiler / blog yazıları
+        name: makaleler
+        file: content/articles.json
+        fields:
+          - label: Yazılar
+            name: articles
+            widget: list
+            summary: "{{fields.title}}"
+            fields:
+              - label: Sayfa içi bağlantı (kimlik)
+                name: id
+                widget: string
+                hint: "Küçük harf, tire; Bilgiler sayfasında #bu-id"
+              - { label: Kategori etiketi, name: category, widget: string }
+              - { label: Başlık, name: title, widget: string }
+              - { label: Tam metin, name: content, widget: text }
+              - { label: Ana sayfa kartı özeti, name: excerpt, widget: text }
+              - label: Kapak görseli yolu
+                name: image
+                widget: string
+              - label: Ana sayfada göster
+                name: showOnHome
+                widget: boolean
+                default: true
+
+      - label: Kurumsal sayfası
+        name: kurumsal
+        file: content/kurumsal.json
+        fields:
+          - label: Üst kahraman bölümü
+            name: hero
+            widget: object
+            fields:
+              - label: Arka plan görseli (URL)
+                name: backgroundImage
+                widget: string
+              - { label: Başlık, name: title, widget: string }
+              - { label: Alt başlık, name: subtitle, widget: text }
+          - label: Kurucu / fotoğraf
+            name: founder
+            widget: object
+            fields:
+              - label: Fotoğraf yolu
+                name: image
+                widget: string
+              - { label: Fotoğraf alt metni, name: imageAlt, widget: string }
+              - { label: Rozet, name: badge, widget: string }
+              - { label: Ad soyad, name: name, widget: string }
+              - { label: Unvan, name: role, widget: string }
+          - label: Hikâye metinleri
+            name: hikaye
+            widget: object
+            fields:
+              - { label: Bölüm başlığı, name: baslik, widget: string }
+              - { label: Giriş paragrafı (alıntıdan önce), name: girisParagrafi, widget: text }
+              - { label: Alıntı cümlesi, name: alinti, widget: text }
+              - { label: Kapanış paragrafı (alıntıdan sonra), name: kapanisParagrafi, widget: text }
+          - label: İstatistik kutuları
+            name: istatistikler
+            widget: list
+            fields:
+              - { label: Değer, name: deger, widget: string }
+              - { label: Açıklama, name: etiket, widget: string }
+
+      - label: Marka şeridi (ana sayfa)
+        name: markalar
+        file: content/brands.json
+        fields:
+          - { label: Bölüm üst etiketi, name: bolumEtiketi, widget: string }
+          - label: Markalar
+            name: markalar
+            widget: list
+            summary: "{{fields.ad}}"
+            fields:
+              - { label: Marka adı, name: ad, widget: string }
+              - label: İkon
+                name: iconKey
+                widget: select
+                options:
+                  - { label: Kalkan onay, value: shieldCheck }
+                  - { label: Ödül, value: award }
+                  - { label: Damla, value: droplet }
+                  - { label: Aktivite, value: activity }
+                  - { label: Şimşek, value: zap }
+                  - { label: Hedef, value: target }
+                  - { label: Saat, value: clock }
+                  - { label: Anahtar, value: wrench }
+                  - { label: Dalga, value: waves }
+                  - { label: Kalkan, value: shield }
+                  - { label: Gösterge, value: gauge }
+              - label: Yazı rengi (Tailwind sınıfı)
+                name: renkSinifi
+                widget: string
+                hint: "text-red-500, text-blue-600, ..."
+              - label: İtalik yazı
+                name: italik
+                widget: boolean
+                required: false
+                default: false
+
+  - name: hizmetler
+    label: Hizmetler
+    files:
+      - label: Hizmet listesi
+        name: services
+        file: content/services.json
+        fields:
+          - label: Hizmetler
+            name: services
+            widget: list
+            summary: "{{fields.title}}"
+            fields:
+              - { label: Başlık, name: title, widget: string }
+              - { label: Slug (URL), name: slug, widget: string, hint: "küçük-harf-tire" }
+              - { label: Kısa açıklama, name: description, widget: text }
+              - { label: Detay metni, name: content, widget: text }
+              - label: İkon
+                name: iconKey
+                widget: select
+                options:
+                  - { label: Aktivite, value: activity }
+                  - { label: Damla, value: droplet }
+                  - { label: Hedef, value: target }
+                  - { label: Ödül, value: award }
+                  - { label: Şimşek, value: zap }
+                  - { label: Saat, value: clock }
+                  - { label: Anahtar, value: wrench }
+                  - { label: Dalga, value: waves }
+                  - { label: Kalkan onay, value: shieldCheck }
+                  - { label: Kalkan, value: shield }
+                  - { label: Gösterge, value: gauge }
+              - { label: İkon rengi (Tailwind), name: iconColorClass, widget: string }
+              - { label: Kart arka plan sınıfı, name: color, widget: string }
+              - { label: Vurgu çerçevesi, name: accent, widget: string }
+              - { label: Liste görseli, name: image, widget: string }
+              - { label: Detay görseli, name: detailImage, widget: string }
+
+  - name: genel
+    label: İletişim, SSS ve yorumlar
+    files:
+      - label: Site geneli
+        name: site
+        file: content/site.json
+        fields:
+          - label: İletişim
+            name: contact
+            widget: object
+            collapsed: true
+            fields:
+              - { label: Telefon (E.164), name: phoneE164, widget: string }
+              - { label: Telefon (görünen), name: phoneDisplay, widget: string }
+              - { label: E-posta, name: email, widget: string }
+              - { label: WhatsApp (90...), name: whatsappE164, widget: string }
+              - { label: WhatsApp mesajı (URL kodlu), name: whatsappMessage, widget: string }
+              - { label: Adres, name: addressLabel, widget: text }
+              - { label: Harita arama metni, name: mapsQuery, widget: string }
+          - label: Üst şerit
+            name: topBar
+            widget: object
+            collapsed: true
+            fields:
+              - { label: Metin, name: text, widget: string }
+              - { label: Arama etiketi, name: callToActionLabel, widget: string }
+          - label: Footer ajans
+            name: agency
+            widget: object
+            collapsed: true
+            fields:
+              - { label: İsim 1, name: nameLine, widget: string }
+              - { label: İsim vurgusu, name: nameHighlight, widget: string }
+              - { label: Slogan, name: tagline, widget: string }
+              - { label: Telefon E.164, name: phoneE164, widget: string }
+              - { label: Telefon görünen, name: phoneDisplay, widget: string }
+              - { label: E-posta, name: email, widget: string }
+              - { label: Adres, name: address, widget: text }
+          - label: Sık sorulan sorular
+            name: faqs
+            widget: list
+            fields:
+              - { label: Soru, name: q, widget: string }
+              - { label: Cevap, name: a, widget: text }
+          - label: Müşteri yorumları
+            name: reviews
+            widget: list
+            fields:
+              - { label: İsim, name: name, widget: string }
+              - { label: Yorum, name: body, widget: text }
+              - { label: Yıldız (1-5), name: rating, widget: number, value_type: int, min: 1, max: 5 }
+              - { label: Konum, name: location, widget: string, required: false }

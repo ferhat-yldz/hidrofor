@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Phone, ChevronDown, Menu, X, ArrowLeft } from "lucide-react";
 import { servicesData } from "@/config/data";
+import { getSite, telHref, waMeHref } from "@/lib/site";
 
 const WhatsAppIcon = ({ className }: { className?: string }) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
@@ -16,6 +17,7 @@ const WhatsAppIcon = ({ className }: { className?: string }) => (
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
+  const { contact, topBar } = getSite();
 
   useEffect(() => {
     if (isMenuOpen) {
@@ -45,7 +47,10 @@ export default function Header() {
     <header className="sticky top-0 z-[100] w-full flex flex-col shadow-sm">
       {/* Top Warning Bar */}
       <div className="bg-fire-red text-white text-center text-sm font-bold py-2 px-4 relative z-20">
-        Malatya'nın Güvenilir Su Çözümleri | 7/24 Kesintisiz Hizmet <a href="tel:+905433363944" className="underline ml-2">Hemen Ara</a>
+        {topBar.text}{" "}
+        <a href={telHref(contact.phoneE164)} className="underline ml-2">
+          {topBar.callToActionLabel}
+        </a>
       </div>
 
       {/* Navigation */}
@@ -78,7 +83,7 @@ export default function Header() {
               <Link href="/#hizmetler" className={`flex items-center gap-1 ${getLinkClasses("/hizmetler", false)}`}>
                 Hizmetler <ChevronDown className="w-4 h-4 transition-transform group-hover:rotate-180" />
               </Link>
-              <div className="absolute top-full left-1/2 -translate-x-1/2 bg-white shadow-2xl rounded-xl p-4 w-72 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all translate-y-4 group-hover:translate-y-0 border border-slate-100 before:absolute antes:-top-2 before:left-1/2 before:-translate-x-1/2 before:border-8 before:border-transparent before:border-b-white max-h-[70vh] overflow-y-auto z-50">
+              <div className="absolute top-full left-1/2 -translate-x-1/2 bg-white shadow-2xl rounded-xl p-4 w-72 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all translate-y-4 group-hover:translate-y-0 border border-slate-100 before:absolute before:-top-2 before:left-1/2 before:-translate-x-1/2 before:border-8 before:border-transparent before:border-b-white max-h-[70vh] overflow-y-auto z-50">
                 <div className="flex flex-col gap-1 relative z-10">
                   {servicesData.map((service, idx) => {
                     const isServiceActive = pathname === `/hizmetler/${service.slug}`;
@@ -97,7 +102,7 @@ export default function Header() {
             <Link href="/bilgiler" className={getLinkClasses("/bilgiler", false)}>Bilgiler</Link>
             <Link href="/#iletisim" className={getLinkClasses("/#iletisim", true)}>İletişim</Link>
 
-            <a href="https://wa.me/905433363944" target="_blank" className="bg-[#25D366] hover:bg-green-600 text-white px-5 py-2.5 rounded-full font-bold shadow-lg shadow-green-200 transition-all transform hover:scale-105 flex items-center gap-2">
+            <a href={waMeHref(contact.whatsappE164)} target="_blank" rel="noopener noreferrer" className="bg-[#25D366] hover:bg-green-600 text-white px-5 py-2.5 rounded-full font-bold shadow-lg shadow-green-200 transition-all transform hover:scale-105 flex items-center gap-2">
               <WhatsAppIcon className="w-4 h-4" /> WhatsApp
             </a>
           </div>
@@ -163,11 +168,11 @@ export default function Header() {
         {/* Footer: Contacts at bottom */}
         <div className="p-8 border-t border-slate-50 bg-slate-50/50 mt-auto">
           <div className="flex flex-col gap-4 text-center">
-            <a href="tel:+905433363944" className="flex items-center justify-center gap-3 text-lg font-black text-slate-900 hover:text-fire-red transition-colors">
-              <Phone className="w-5 h-5 text-fire-red" /> 0543 336 39 44
+            <a href={telHref(contact.phoneE164)} className="flex items-center justify-center gap-3 text-lg font-black text-slate-900 hover:text-fire-red transition-colors">
+              <Phone className="w-5 h-5 text-fire-red" /> {contact.phoneDisplay}
             </a>
             <div className="h-px w-12 bg-slate-200 mx-auto"></div>
-            <a href="https://wa.me/905433363944" target="_blank" className="flex items-center justify-center gap-3 text-lg font-black text-slate-900 hover:text-[#25D366] transition-colors">
+            <a href={waMeHref(contact.whatsappE164)} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-3 text-lg font-black text-slate-900 hover:text-[#25D366] transition-colors">
               <WhatsAppIcon className="w-6 h-6 text-[#25D366]" /> WhatsApp Destek
             </a>
           </div>

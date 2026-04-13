@@ -3,3 +3,19 @@
 [build]
   command = "npm run build"
   publish = ".next"
+
+# Decap CMS (/admin): kök URL’yi index’e yönlendir
+[[redirects]]
+  from = "/admin"
+  to = "/admin/index.html"
+  status = 200
+
+# AK Panel / Decap — Netlify’da:
+# public/admin/config.yml içinde backend’i git-gateway yapın; proxy_url satırını kaldırın.
+# Identity + Git Gateway açın. Ön kapı şifresi (admin) kaynakta görünür; gerçek güvenlik Identity’dir.
+# https://decapcms.org/docs/git-gateway-backend/
+
+[[headers]]
+  for = "/admin/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
