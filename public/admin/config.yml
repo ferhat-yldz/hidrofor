@@ -1,16 +1,13 @@
 # AK Panel / Decap CMS
-# YEREL: npm run dev + npm run cms → http://localhost:3000/admin
-#   backend: proxy + decap-server (8081) → Decap’in ikinci giriş ekranı çıkmaz.
-# NETLIFY: Aşağıdaki backend bloğunu şununla değiştirin; üstte local_backend YOK:
-#   backend:
-#     name: git-gateway
-#     branch: main
-#   + Netlify Identity + Git Gateway. AK Panel şifresi (admin) sadece ön kapıdır; gerçek güvenlik Identity’dedir.
+# Production backend: GitHub API
+# Local development: `local_backend: true` sayesinde `npm run cms` ile lokal proxy otomatik kullanılır.
+
+local_backend: true
 
 backend:
-  name: proxy
-  proxy_url: http://localhost:8081/api/v1
-  branch: main
+  name: github
+  repo: ferhat-yldz/hidrofor
+  branch: master
 
 media_folder: public/images/uploads
 public_folder: /images/uploads

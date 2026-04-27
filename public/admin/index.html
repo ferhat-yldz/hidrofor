@@ -58,7 +58,12 @@
           if (window.__decapLoaded) return;
           window.__decapLoaded = true;
           var s = document.createElement("script");
-          s.src = "https://unpkg.com/decap-cms@3.4.0/dist/decap-cms.js";
+          s.src = "https://unpkg.com/decap-cms@3.6.0/dist/decap-cms.js";
+          s.onerror = function () {
+            var fallback = document.createElement("script");
+            fallback.src = "https://cdn.jsdelivr.net/npm/decap-cms@3.6.0/dist/decap-cms.js";
+            document.body.appendChild(fallback);
+          };
           document.body.appendChild(s);
         }
 
