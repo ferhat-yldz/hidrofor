@@ -26,15 +26,27 @@ export function CmsImage({
 
   if (remote) {
     if (fill) {
-      return <img src={src} alt={alt} className={className} />;
+      return (
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          unoptimized
+          className={className ?? ""}
+          sizes={sizes}
+          priority={priority}
+        />
+      );
     }
     return (
-      <img
+      <Image
         src={src}
         alt={alt}
-        width={width}
-        height={height}
+        width={width ?? 800}
+        height={height ?? 600}
+        unoptimized
         className={className}
+        priority={priority}
       />
     );
   }

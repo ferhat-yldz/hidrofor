@@ -32,7 +32,7 @@ export default function Bilgiler() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-16 text-center">
              <h2 className="text-fire-red font-black uppercase tracking-widest text-sm mb-3">Blog</h2>
-             <h3 className="text-3xl md:text-4xl font-black text-slate-900">Usta'dan Öneriler</h3>
+             <h3 className="text-3xl md:text-4xl font-black text-slate-900">Usta&apos;dan Oneriler</h3>
           </div>
           <div className="space-y-16">
             {articles.map((article, idx) => (

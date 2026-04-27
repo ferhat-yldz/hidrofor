@@ -1,76 +1,57 @@
-import { promises as fs } from "node:fs";
-import path from "node:path";
 import { NextResponse } from "next/server";
-import { isAdminAuthenticated } from "@/lib/adminAuth";
-
-const CONTENT_DIR = path.join(process.cwd(), "content");
-const ALLOWED_FILES = [
-  "home.json",
-  "services.json",
-  "site.json",
-  "articles.json",
-  "gallery.json",
-  "kurumsal.json",
-  "brands.json",
-] as const;
-
-type AllowedFile = (typeof ALLOWED_FILES)[number];
+import { ALLOWED_CONTENT_FILES, type AllowedContentFile } from "@/lib/admin/constants";
+import { requireAdmin, requireAdminMutation } from "@/lib/admin/security";
+import {
+  clearDraft,
+  getContentState,
+  isAllowedContentFile,
+  publishDraft,
+  writeDraftContent,
+} from "@/lib/admin/storage";
 
 type UpdateBody = {
-  file?: AllowedFile;
-  jsonText?: string;
+  file?: AllowedContentFile;
+  data?: unknown;
+  action?: "saveDraft" | "publish" | "discardDraft";
 };
 
-async function readJsonFile(file: AllowedFile) {
-  const fullPath = path.join(CONTENT_DIR, file);
-  const raw = await fs.readFile(fullPath, "utf8");
-  return JSON.parse(raw) as unknown;
-}
-
-function normalizeJsonText(input: string): string {
-  const parsed = JSON.parse(input) as unknown;
-  return `${JSON.stringify(parsed, null, 2)}\n`;
-}
-
 export async function GET() {
-  const authenticated = await isAdminAuthenticated();
-  if (!authenticated) {
-    return NextResponse.json({ message: "Yetkisiz erisim." }, { status: 401 });
-  }
-
-  const files = await Promise.all(
-    ALLOWED_FILES.map(async (file) => {
-      const data = await readJsonFile(file);
-      return { file, data };
-    }),
-  );
+  const authError = await requireAdmin();
+  if (authError) return authError;
 
   return NextResponse.json({
-    files,
-    allowedFiles: ALLOWED_FILES,
+    files: await getContentState(),
+    allowedFiles: ALLOWED_CONTENT_FILES,
   });
 }
 
 export async function PUT(req: Request) {
-  const authenticated = await isAdminAuthenticated();
-  if (!authenticated) {
-    return NextResponse.json({ message: "Yetkisiz erisim." }, { status: 401 });
-  }
+  const authError = await requireAdminMutation(req);
+  if (authError) return authError;
 
   const body = (await req.json()) as UpdateBody;
-  if (!body.file || !ALLOWED_FILES.includes(body.file)) {
+  if (!body.file || !isAllowedContentFile(body.file)) {
     return NextResponse.json({ message: "Gecersiz dosya." }, { status: 400 });
   }
-  if (typeof body.jsonText !== "string") {
-    return NextResponse.json({ message: "jsonText gerekli." }, { status: 400 });
+  const action = body.action ?? "saveDraft";
+
+  if (action === "saveDraft") {
+    if (typeof body.data === "undefined") {
+      return NextResponse.json({ message: "Kayit icin data gerekli." }, { status: 400 });
+    }
+    await writeDraftContent(body.file, body.data);
+    return NextResponse.json({ ok: true, message: "Taslak kaydedildi." });
   }
 
-  try {
-    const normalized = normalizeJsonText(body.jsonText);
-    const fullPath = path.join(CONTENT_DIR, body.file);
-    await fs.writeFile(fullPath, normalized, "utf8");
-    return NextResponse.json({ ok: true });
-  } catch {
-    return NextResponse.json({ message: "JSON gecersiz. Kaydedilemedi." }, { status: 400 });
+  if (action === "publish") {
+    await publishDraft(body.file);
+    return NextResponse.json({ ok: true, message: "Icerik yayina alindi." });
   }
+
+  if (action === "discardDraft") {
+    await clearDraft(body.file);
+    return NextResponse.json({ ok: true, message: "Taslak silindi." });
+  }
+
+  return NextResponse.json({ message: "Gecersiz islem." }, { status: 400 });
 }

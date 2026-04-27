@@ -228,7 +228,9 @@ export default function Home() {
                     <Star key={si} className="w-4 h-4 fill-current" />
                   ))}
                 </div>
-                <p className="text-slate-200 font-medium italic mb-6 leading-relaxed text-sm flex-1">"{review.body}"</p>
+                <p className="text-slate-200 font-medium italic mb-6 leading-relaxed text-sm flex-1">
+                  &ldquo;{review.body}&rdquo;
+                </p>
                 <div className="mt-auto">
                   <div className="font-black text-white text-base">{review.name}</div>
                   <div className="text-xs font-bold text-blue-500 mt-1">{review.location || "Malatya"}</div>

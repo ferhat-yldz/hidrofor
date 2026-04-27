@@ -1,13 +1,14 @@
 "use client";
 
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
-
-type ContentFile = {
-  file: string;
-  data: unknown;
-};
-
-const prettyBytes = (str: string) => new Blob([str]).size;
+import { BackupManager } from "@/components/admin/BackupManager";
+import { ContentEditor } from "@/components/admin/ContentEditor";
+import { LoginPanel } from "@/components/admin/LoginPanel";
+import { MediaManager } from "@/components/admin/MediaManager";
+import { OverviewCards } from "@/components/admin/OverviewCards";
+import { SettingsPanel } from "@/components/admin/SettingsPanel";
+import { TabNav, type AdminTab } from "@/components/admin/TabNav";
+import type { ContentStateItem, MediaItem } from "@/types/admin";
 
 export default function AdminPage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -16,13 +17,25 @@ export default function AdminPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState("");
+  const [activeTab, setActiveTab] = useState<AdminTab>("overview");
+  const [isBusy, setIsBusy] = useState(false);
 
-  const [files, setFiles] = useState<ContentFile[]>([]);
+  const [files, setFiles] = useState<ContentStateItem[]>([]);
   const [activeFile, setActiveFile] = useState("");
-  const [editorValue, setEditorValue] = useState("");
+  const [editorValue, setEditorValue] = useState<unknown>(null);
+  const [mediaFiles, setMediaFiles] = useState<MediaItem[]>([]);
+  const [backups, setBackups] = useState<string[]>([]);
+  const [imagePickerOpen, setImagePickerOpen] = useState(false);
+  const [imageApply, setImageApply] = useState<((url: string) => void) | null>(null);
+
   const [info, setInfo] = useState("");
   const [error, setError] = useState("");
-  const [isSaving, setIsSaving] = useState(false);
+
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [nextPassword, setNextPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [settingsInfo, setSettingsInfo] = useState("");
+  const [settingsError, setSettingsError] = useState("");
 
   const bootstrap = useCallback(async () => {
     setIsLoading(true);
@@ -33,7 +46,7 @@ export default function AdminPage() {
       const ok = Boolean(meData.authenticated);
       setAuthenticated(ok);
       if (ok) {
-        await loadContent();
+        await Promise.all([loadContent(), loadMedia(), loadBackups()]);
       }
     } catch {
       setError("Panel baslatilirken hata olustu.");
@@ -46,30 +59,37 @@ export default function AdminPage() {
     void bootstrap();
   }, [bootstrap]);
 
-  const activeFileStats = useMemo(() => {
-    if (!activeFile) return null;
-    return {
-      chars: editorValue.length,
-      bytes: prettyBytes(editorValue),
-    };
-  }, [activeFile, editorValue]);
+  const draftCount = useMemo(() => files.filter((item) => item.hasDraft).length, [files]);
 
   async function loadContent() {
-    setError("");
     const res = await fetch("/api/admin/content", { cache: "no-store" });
     if (!res.ok) {
       setAuthenticated(false);
       throw new Error("Icerik yuklenemedi.");
     }
 
-    const payload = (await res.json()) as { files?: ContentFile[] };
+    const payload = (await res.json()) as { files?: ContentStateItem[] };
     const nextFiles = payload.files ?? [];
     setFiles(nextFiles);
     if (nextFiles.length > 0) {
       const initial = nextFiles[0];
       setActiveFile(initial.file);
-      setEditorValue(JSON.stringify(initial.data, null, 2));
+      setEditorValue(initial.draft ?? initial.published);
     }
+  }
+
+  async function loadMedia() {
+    const res = await fetch("/api/admin/media", { cache: "no-store" });
+    if (!res.ok) return;
+    const payload = (await res.json()) as { files?: MediaItem[] };
+    setMediaFiles(payload.files ?? []);
+  }
+
+  async function loadBackups() {
+    const res = await fetch("/api/admin/backup", { cache: "no-store" });
+    if (!res.ok) return;
+    const payload = (await res.json()) as { backups?: string[] };
+    setBackups(payload.backups ?? []);
   }
 
   function selectFile(fileName: string) {
@@ -78,7 +98,7 @@ export default function AdminPage() {
     setInfo("");
     setError("");
     setActiveFile(fileName);
-    setEditorValue(JSON.stringify(selected.data, null, 2));
+    setEditorValue(selected.draft ?? selected.published);
   }
 
   async function onLogin(e: FormEvent) {
@@ -100,12 +120,12 @@ export default function AdminPage() {
 
     setAuthenticated(true);
     setPassword("");
-    await loadContent();
+    await Promise.all([loadContent(), loadMedia(), loadBackups()]);
   }
 
-  async function onSave() {
+  async function mutateContent(action: "saveDraft" | "publish" | "discardDraft") {
     if (!activeFile) return;
-    setIsSaving(true);
+    setIsBusy(true);
     setError("");
     setInfo("");
     try {
@@ -114,7 +134,8 @@ export default function AdminPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           file: activeFile,
-          jsonText: editorValue,
+          action,
+          data: editorValue,
         }),
       });
       const payload = (await res.json()) as { message?: string };
@@ -123,12 +144,12 @@ export default function AdminPage() {
         return;
       }
 
-      setInfo(`${activeFile} basariyla kaydedildi.`);
+      setInfo(payload.message ?? "Islem tamamlandi.");
       await loadContent();
     } catch {
-      setError("Kaydetme sirasinda ag hatasi olustu.");
+      setError("Islem sirasinda ag hatasi olustu.");
     } finally {
-      setIsSaving(false);
+      setIsBusy(false);
     }
   }
 
@@ -145,6 +166,133 @@ export default function AdminPage() {
     setLoginError("");
   }
 
+  async function onUpload(file: File) {
+    setIsBusy(true);
+    setError("");
+    setInfo("");
+    const formData = new FormData();
+    formData.append("file", file);
+    try {
+      const res = await fetch("/api/admin/media", {
+        method: "POST",
+        body: formData,
+      });
+      const payload = (await res.json()) as { message?: string };
+      if (!res.ok) {
+        setError(payload.message ?? "Yukleme basarisiz.");
+        return;
+      }
+      setInfo("Dosya yuklendi.");
+      await loadMedia();
+    } finally {
+      setIsBusy(false);
+    }
+  }
+
+  async function onDeleteMedia(fileName: string) {
+    setIsBusy(true);
+    setError("");
+    setInfo("");
+    try {
+      const res = await fetch(`/api/admin/media?file=${encodeURIComponent(fileName)}`, {
+        method: "DELETE",
+      });
+      const payload = (await res.json()) as { message?: string };
+      if (!res.ok) {
+        setError(payload.message ?? "Silme basarisiz.");
+        return;
+      }
+      setInfo("Dosya silindi.");
+      await loadMedia();
+    } finally {
+      setIsBusy(false);
+    }
+  }
+
+  async function onCreateBackup() {
+    setIsBusy(true);
+    setInfo("");
+    setError("");
+    try {
+      const res = await fetch("/api/admin/backup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "create" }),
+      });
+      const payload = (await res.json()) as { message?: string };
+      if (!res.ok) {
+        setError(payload.message ?? "Yedek olusturulamadi.");
+        return;
+      }
+      setInfo(payload.message ?? "Yedek olusturuldu.");
+      await loadBackups();
+    } finally {
+      setIsBusy(false);
+    }
+  }
+
+  async function onRestoreBackup(backupId: string) {
+    setIsBusy(true);
+    setInfo("");
+    setError("");
+    try {
+      const res = await fetch("/api/admin/backup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "restore", backupId }),
+      });
+      const payload = (await res.json()) as { message?: string };
+      if (!res.ok) {
+        setError(payload.message ?? "Yedek geri yuklenemedi.");
+        return;
+      }
+      setInfo(payload.message ?? "Yedek geri yuklendi.");
+      await loadContent();
+    } finally {
+      setIsBusy(false);
+    }
+  }
+
+  function openImagePicker(apply: (url: string) => void) {
+    setImageApply(() => apply);
+    setImagePickerOpen(true);
+    void loadMedia();
+  }
+
+  async function onChangePassword(e: FormEvent) {
+    e.preventDefault();
+    setSettingsInfo("");
+    setSettingsError("");
+
+    if (nextPassword !== confirmPassword) {
+      setSettingsError("Yeni sifre alanlari ayni olmali.");
+      return;
+    }
+    setIsBusy(true);
+    try {
+      const res = await fetch("/api/admin/password/change", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          currentPassword,
+          nextPassword,
+        }),
+      });
+      const payload = (await res.json()) as { message?: string };
+      if (!res.ok) {
+        setSettingsError(payload.message ?? "Sifre degistirilemedi.");
+        return;
+      }
+      setSettingsInfo(payload.message ?? "Sifre degistirildi.");
+      setCurrentPassword("");
+      setNextPassword("");
+      setConfirmPassword("");
+      await onLogout();
+    } finally {
+      setIsBusy(false);
+    }
+  }
+
   if (isLoading) {
     return (
       <main className="min-h-screen bg-slate-950 text-slate-100 grid place-items-center p-6">
@@ -156,54 +304,16 @@ export default function AdminPage() {
   if (!authenticated) {
     return (
       <main className="min-h-screen bg-slate-950 text-slate-100 grid place-items-center p-6">
-        <section className="w-full max-w-md rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-2xl">
-          <h1 className="text-2xl font-semibold">AK Admin Panel</h1>
-          <p className="mt-2 text-sm text-slate-300">
-            Sadece yetkili kullanicilar erisebilir.
-          </p>
-          <form className="mt-6 space-y-4" onSubmit={onLogin}>
-            <label className="block text-sm">
-              <span className="mb-1 block text-slate-300">Kullanici adi</span>
-              <input
-                className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 outline-none focus:border-cyan-400"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                autoComplete="username"
-                required
-              />
-            </label>
-
-            <label className="block text-sm">
-              <span className="mb-1 block text-slate-300">Sifre</span>
-              <div className="flex gap-2">
-                <input
-                  className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 outline-none focus:border-cyan-400"
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  autoComplete="current-password"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((v) => !v)}
-                  className="rounded-lg border border-slate-700 px-3 text-sm hover:bg-slate-800"
-                >
-                  {showPassword ? "Gizle" : "Goster"}
-                </button>
-              </div>
-            </label>
-
-            {loginError ? <p className="text-sm text-rose-400">{loginError}</p> : null}
-
-            <button
-              type="submit"
-              className="w-full rounded-lg bg-cyan-600 px-4 py-2 font-medium hover:bg-cyan-500"
-            >
-              Giris yap
-            </button>
-          </form>
-        </section>
+        <LoginPanel
+          username={username}
+          password={password}
+          showPassword={showPassword}
+          error={loginError}
+          onUsernameChange={setUsername}
+          onPasswordChange={setPassword}
+          onTogglePassword={() => setShowPassword((v) => !v)}
+          onSubmit={onLogin}
+        />
       </main>
     );
   }
@@ -224,56 +334,108 @@ export default function AdminPage() {
           </button>
         </div>
       </header>
+      <div className="mx-auto max-w-7xl space-y-4 px-4 py-4">
+        <TabNav activeTab={activeTab} onChange={setActiveTab} />
 
-      <div className="mx-auto grid max-w-7xl gap-4 px-4 py-4 md:grid-cols-[260px_1fr]">
-        <aside className="rounded-xl border border-slate-800 bg-slate-900/60 p-3">
-          <p className="mb-2 text-xs uppercase tracking-wide text-slate-400">Dosyalar</p>
-          <div className="space-y-2">
-            {files.map((file) => (
-              <button
-                key={file.file}
-                onClick={() => selectFile(file.file)}
-                className={`w-full rounded-lg border px-3 py-2 text-left text-sm transition ${
-                  activeFile === file.file
-                    ? "border-cyan-500 bg-cyan-500/10"
-                    : "border-slate-700 hover:bg-slate-800"
-                }`}
-              >
-                {file.file}
-              </button>
-            ))}
-          </div>
-        </aside>
-
-        <section className="rounded-xl border border-slate-800 bg-slate-900/60 p-3">
-          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-            <div>
-              <p className="text-sm font-medium">{activeFile || "Dosya secin"}</p>
-              {activeFileStats ? (
-                <p className="text-xs text-slate-400">
-                  {activeFileStats.chars} karakter - {activeFileStats.bytes} bayt
-                </p>
-              ) : null}
-            </div>
-            <button
-              onClick={onSave}
-              disabled={!activeFile || isSaving}
-              className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {isSaving ? "Kaydediliyor..." : "Kaydet"}
-            </button>
-          </div>
-
-          <textarea
-            value={editorValue}
-            onChange={(e) => setEditorValue(e.target.value)}
-            className="h-[65vh] w-full rounded-lg border border-slate-700 bg-slate-950 p-3 font-mono text-sm outline-none focus:border-cyan-400"
-            spellCheck={false}
+        {activeTab === "overview" ? (
+          <OverviewCards
+            contentCount={files.length}
+            draftCount={draftCount}
+            mediaCount={mediaFiles.length}
+            backupCount={backups.length}
           />
+        ) : null}
 
-          {info ? <p className="mt-2 text-sm text-emerald-400">{info}</p> : null}
-          {error ? <p className="mt-2 text-sm text-rose-400">{error}</p> : null}
-        </section>
+        {activeTab === "content" ? (
+          <ContentEditor
+            files={files}
+            activeFile={activeFile}
+            selectedData={editorValue}
+            isBusy={isBusy}
+            message={info}
+            error={error}
+            onFileSelect={selectFile}
+            onDataChange={setEditorValue}
+            onSaveDraft={() => void mutateContent("saveDraft")}
+            onPublish={() => void mutateContent("publish")}
+            onDiscardDraft={() => void mutateContent("discardDraft")}
+            onPickImage={openImagePicker}
+          />
+        ) : null}
+
+        {activeTab === "media" ? (
+          <MediaManager
+            files={mediaFiles}
+            isBusy={isBusy}
+            info={info}
+            error={error}
+            onUpload={(file) => void onUpload(file)}
+            onDelete={(fileName) => void onDeleteMedia(fileName)}
+            onUseImage={(url) => {
+              navigator.clipboard.writeText(url).catch(() => null);
+              setInfo("URL panoya kopyalandi.");
+            }}
+          />
+        ) : null}
+
+        {activeTab === "backups" ? (
+          <BackupManager
+            backups={backups}
+            isBusy={isBusy}
+            info={info}
+            error={error}
+            onCreate={() => void onCreateBackup()}
+            onRestore={(backupId) => void onRestoreBackup(backupId)}
+          />
+        ) : null}
+
+        {activeTab === "settings" ? (
+          <SettingsPanel
+            currentPassword={currentPassword}
+            nextPassword={nextPassword}
+            confirmPassword={confirmPassword}
+            isSubmitting={isBusy}
+            info={settingsInfo}
+            error={settingsError}
+            onCurrentPasswordChange={setCurrentPassword}
+            onNextPasswordChange={setNextPassword}
+            onConfirmPasswordChange={setConfirmPassword}
+            onSubmit={onChangePassword}
+          />
+        ) : null}
+
+        {imagePickerOpen ? (
+          <div className="fixed inset-0 z-40 grid place-items-center bg-black/60 p-4">
+            <div className="max-h-[70vh] w-full max-w-2xl overflow-auto rounded-xl border border-slate-700 bg-slate-900 p-4">
+              <div className="mb-3 flex items-center justify-between">
+                <h3 className="text-sm font-semibold">Medya secici</h3>
+                <button
+                  type="button"
+                  onClick={() => setImagePickerOpen(false)}
+                  className="rounded border border-slate-600 px-2 py-1 text-xs"
+                >
+                  Kapat
+                </button>
+              </div>
+              <div className="grid gap-2">
+                {mediaFiles.map((file) => (
+                  <button
+                    key={`picker-${file.name}`}
+                    type="button"
+                    onClick={() => {
+                      imageApply?.(file.url);
+                      setImagePickerOpen(false);
+                    }}
+                    className="rounded border border-slate-700 px-3 py-2 text-left text-sm hover:bg-slate-800"
+                  >
+                    <span className="block">{file.name}</span>
+                    <span className="text-xs text-slate-400">{file.url}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : null}
       </div>
     </main>
   );
