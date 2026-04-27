@@ -18,6 +18,16 @@ type ContentEditorProps = {
   onPickImage: (apply: (url: string) => void) => void;
 };
 
+const FILE_LABELS: Record<string, string> = {
+  "home.json": "Ana Sayfa Icerikleri",
+  "services.json": "Hizmetler",
+  "site.json": "Iletisim ve Site Geneli",
+  "articles.json": "Bilgiler / Blog Yazilari",
+  "gallery.json": "Galeri",
+  "kurumsal.json": "Kurumsal Sayfasi",
+  "brands.json": "Marka Seridi",
+};
+
 export function ContentEditor({
   files,
   activeFile,
@@ -33,6 +43,7 @@ export function ContentEditor({
   onPickImage,
 }: ContentEditorProps) {
   const selected = files.find((file) => file.file === activeFile);
+  const selectedLabel = selected ? FILE_LABELS[selected.file] ?? selected.file : "";
 
   return (
     <div className="grid gap-4 md:grid-cols-[260px_1fr]">
@@ -50,7 +61,8 @@ export function ContentEditor({
                   : "border-slate-700 hover:bg-slate-800"
               }`}
             >
-              <span className="block">{file.file}</span>
+              <span className="block font-semibold">{FILE_LABELS[file.file] ?? file.file}</span>
+              <span className="block text-[11px] text-slate-500">{file.file}</span>
               <span className={`text-xs ${file.hasDraft ? "text-amber-300" : "text-slate-400"}`}>
                 {file.hasDraft ? "Taslak var" : "Yayinda"}
               </span>
@@ -62,7 +74,8 @@ export function ContentEditor({
       <section className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <div>
-            <p className="text-sm font-medium">{activeFile || "Dosya secin"}</p>
+            <p className="text-sm font-medium">{selectedLabel || "Dosya secin"}</p>
+            {selected ? <p className="text-[11px] text-slate-500">{selected.file}</p> : null}
             {selected ? (
               <p className="text-xs text-slate-400">
                 Durum: {selected.hasDraft ? "Taslak mevcut" : "Yayinlanan surum"}
@@ -81,7 +94,7 @@ export function ContentEditor({
             <button
               type="button"
               onClick={onPublish}
-              disabled={!activeFile || isBusy}
+              disabled={!activeFile || isBusy || !selected?.hasDraft}
               className="rounded-lg bg-emerald-600 px-3 py-2 text-sm hover:bg-emerald-500 disabled:opacity-60"
             >
               Yayina al

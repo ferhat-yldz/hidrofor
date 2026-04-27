@@ -321,7 +321,7 @@ export default function AdminPage() {
   return (
     <main className="min-h-screen bg-slate-950 text-slate-100">
       <header className="border-b border-slate-800 bg-slate-900/70 px-4 py-3 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between">
+        <div className="flex w-full items-center justify-between">
           <div>
             <h1 className="text-lg font-semibold">AK Hidrofor Yonetim Paneli</h1>
             <p className="text-xs text-slate-300">Decap olmadan JSON tabanli icerik yonetimi</p>
@@ -334,7 +334,7 @@ export default function AdminPage() {
           </button>
         </div>
       </header>
-      <div className="mx-auto max-w-7xl space-y-4 px-4 py-4">
+      <div className="w-full space-y-4 px-4 py-4">
         <TabNav activeTab={activeTab} onChange={setActiveTab} />
 
         {activeTab === "overview" ? (
