@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
 
 type PreviewMessage = {
   type: "ak-admin-preview";
@@ -16,9 +15,13 @@ export function postPreviewToFrame(target: Window | null, file: string, data: un
 }
 
 export function useLivePreviewFile<T>(file: string, fallback: T): T {
-  const searchParams = useSearchParams();
-  const isPreviewMode = searchParams.get("preview") === "1";
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [value, setValue] = useState<T>(fallback);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setIsPreviewMode(params.get("preview") === "1");
+  }, []);
 
   useEffect(() => {
     if (!isPreviewMode) return;
