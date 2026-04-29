@@ -7,8 +7,9 @@ import {
 } from "lucide-react";
 import { servicesData } from "@/config/data";
 import { getSite, telHref, waHref } from "@/lib/site";
-import { getHomeContent, getGallery, getHomeFeaturedArticles } from "@/lib/pages";
+import { getHomeContent, getGallery, getArticlesFile } from "@/lib/pages";
 import { CmsImage } from "@/components/CmsImage";
+import { useLivePreviewFile } from "@/lib/adminLivePreview";
 
 const WhatsAppIcon = ({ className }: { className?: string }) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
@@ -19,11 +20,15 @@ const WhatsAppIcon = ({ className }: { className?: string }) => (
 import Brands from "@/components/Brands";
 
 export default function Home() {
-  const site = getSite();
+  const site = useLivePreviewFile("site.json", getSite());
   const { contact, faqs, reviews } = site;
-  const h = getHomeContent();
-  const { items: galeriOğeleri } = getGallery();
-  const öneÇıkanYazılar = getHomeFeaturedArticles(h.bilgiKosesi.anasayfaKartSayisi);
+  const h = useLivePreviewFile("home.json", getHomeContent());
+  const gallery = useLivePreviewFile("gallery.json", getGallery());
+  const articlesFile = useLivePreviewFile("articles.json", getArticlesFile());
+  const { items: galeriOğeleri } = gallery;
+  const öneÇıkanYazılar = (articlesFile.articles ?? [])
+    .filter((a) => a.showOnHome !== false)
+    .slice(0, h.bilgiKosesi.anasayfaKartSayisi);
   const hero = h.hero;
 
   return (

@@ -1,8 +1,12 @@
+"use client";
+
 import { SERVICE_ICON_MAP, isServiceIconKey } from "@/lib/serviceIcons";
 import { getBrandsContent } from "@/lib/pages";
+import { useLivePreviewFile } from "@/lib/adminLivePreview";
 
 export default function Brands() {
-  const { bolumEtiketi, markalar } = getBrandsContent();
+  const brands = useLivePreviewFile("brands.json", getBrandsContent());
+  const { bolumEtiketi, markalar } = brands;
 
   return (
     <section className="bg-white py-12 border-y border-slate-100">

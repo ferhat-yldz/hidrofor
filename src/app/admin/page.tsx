@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { BackupManager } from "@/components/admin/BackupManager";
 import { ContentEditor } from "@/components/admin/ContentEditor";
 import { LoginPanel } from "@/components/admin/LoginPanel";
@@ -9,6 +9,21 @@ import { OverviewCards } from "@/components/admin/OverviewCards";
 import { SettingsPanel } from "@/components/admin/SettingsPanel";
 import { TabNav, type AdminTab } from "@/components/admin/TabNav";
 import type { ContentStateItem, MediaItem } from "@/types/admin";
+
+function stableStringify(value: unknown): string {
+  if (value === null || typeof value !== "object") {
+    return JSON.stringify(value);
+  }
+
+  if (Array.isArray(value)) {
+    return `[${value.map((item) => stableStringify(item)).join(",")}]`;
+  }
+
+  const entries = Object.entries(value as Record<string, unknown>).sort(([a], [b]) => a.localeCompare(b));
+  return `{${entries
+    .map(([key, item]) => `${JSON.stringify(key)}:${stableStringify(item)}`)
+    .join(",")}}`;
+}
 
 export default function AdminPage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -37,29 +52,35 @@ export default function AdminPage() {
   const [settingsInfo, setSettingsInfo] = useState("");
   const [settingsError, setSettingsError] = useState("");
 
-  const bootstrap = useCallback(async () => {
-    setIsLoading(true);
-    setError("");
-    try {
-      const meRes = await fetch("/api/admin/me", { cache: "no-store" });
-      const meData = (await meRes.json()) as { authenticated?: boolean };
-      const ok = Boolean(meData.authenticated);
-      setAuthenticated(ok);
-      if (ok) {
-        await Promise.all([loadContent(), loadMedia(), loadBackups()]);
-      }
-    } catch {
-      setError("Panel baslatilirken hata olustu.");
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
+  // Initial auth bootstrap should run once on mount.
+  /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
+    const bootstrap = async () => {
+      setIsLoading(true);
+      setError("");
+      try {
+        const meRes = await fetch("/api/admin/me", { cache: "no-store" });
+        const meData = (await meRes.json()) as { authenticated?: boolean };
+        const ok = Boolean(meData.authenticated);
+        setAuthenticated(ok);
+        if (ok) {
+          await Promise.all([loadContent(), loadMedia(), loadBackups()]);
+        }
+      } catch {
+        setError("Panel baslatilirken hata olustu.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
     void bootstrap();
-  }, [bootstrap]);
+  }, []);
+  /* eslint-enable react-hooks/exhaustive-deps */
 
-  const draftCount = useMemo(() => files.filter((item) => item.hasDraft).length, [files]);
+  const hasChanges = useMemo(() => {
+    const selected = files.find((item) => item.file === activeFile);
+    if (!selected) return false;
+    return stableStringify(selected.published) !== stableStringify(editorValue);
+  }, [activeFile, editorValue, files]);
 
   async function loadContent() {
     const res = await fetch("/api/admin/content", { cache: "no-store" });
@@ -70,11 +91,12 @@ export default function AdminPage() {
 
     const payload = (await res.json()) as { files?: ContentStateItem[] };
     const nextFiles = payload.files ?? [];
+    const previousActive = activeFile;
     setFiles(nextFiles);
     if (nextFiles.length > 0) {
-      const initial = nextFiles[0];
-      setActiveFile(initial.file);
-      setEditorValue(initial.draft ?? initial.published);
+      const nextSelected = nextFiles.find((item) => item.file === previousActive) ?? nextFiles[0];
+      setActiveFile(nextSelected.file);
+      setEditorValue(nextSelected.published);
     }
   }
 
@@ -87,7 +109,11 @@ export default function AdminPage() {
 
   async function loadBackups() {
     const res = await fetch("/api/admin/backup", { cache: "no-store" });
-    if (!res.ok) return;
+    if (!res.ok) {
+      const text = await res.text();
+      setError(text || "Yedek listesi alinamadi.");
+      return;
+    }
     const payload = (await res.json()) as { backups?: string[] };
     setBackups(payload.backups ?? []);
   }
@@ -98,7 +124,7 @@ export default function AdminPage() {
     setInfo("");
     setError("");
     setActiveFile(fileName);
-    setEditorValue(selected.draft ?? selected.published);
+    setEditorValue(selected.published);
   }
 
   async function onLogin(e: FormEvent) {
@@ -123,8 +149,14 @@ export default function AdminPage() {
     await Promise.all([loadContent(), loadMedia(), loadBackups()]);
   }
 
-  async function mutateContent(action: "saveDraft" | "publish" | "discardDraft") {
+  async function publishContent() {
     if (!activeFile) return;
+    if (!hasChanges) {
+      setError("Ayni icerik tekrar yayinlanamaz. Once bir degisiklik yapin.");
+      setInfo("");
+      return;
+    }
+
     setIsBusy(true);
     setError("");
     setInfo("");
@@ -134,11 +166,12 @@ export default function AdminPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           file: activeFile,
-          action,
           data: editorValue,
         }),
       });
-      const payload = (await res.json()) as { message?: string };
+      const payload = (await res.json().catch(() => ({ message: "API cevabi okunamadi." }))) as {
+        message?: string;
+      };
       if (!res.ok) {
         setError(payload.message ?? "Kaydetme sirasinda hata olustu.");
         return;
@@ -219,7 +252,9 @@ export default function AdminPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: "create" }),
       });
-      const payload = (await res.json()) as { message?: string };
+      const payload = (await res.json().catch(() => ({ message: "API cevabi okunamadi." }))) as {
+        message?: string;
+      };
       if (!res.ok) {
         setError(payload.message ?? "Yedek olusturulamadi.");
         return;
@@ -241,7 +276,9 @@ export default function AdminPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: "restore", backupId }),
       });
-      const payload = (await res.json()) as { message?: string };
+      const payload = (await res.json().catch(() => ({ message: "API cevabi okunamadi." }))) as {
+        message?: string;
+      };
       if (!res.ok) {
         setError(payload.message ?? "Yedek geri yuklenemedi.");
         return;
@@ -320,27 +357,26 @@ export default function AdminPage() {
 
   return (
     <main className="min-h-screen bg-slate-950 text-slate-100">
-      <header className="border-b border-slate-800 bg-slate-900/70 px-4 py-3 backdrop-blur">
-        <div className="flex w-full items-center justify-between">
+      <header className="border-b border-slate-800 bg-gradient-to-r from-slate-900 via-slate-900 to-blue-950/60 px-4 py-3 backdrop-blur">
+        <div className="mx-auto flex w-full max-w-[1400px] items-center justify-between">
           <div>
-            <h1 className="text-lg font-semibold">AK Hidrofor Yonetim Paneli</h1>
-            <p className="text-xs text-slate-300">Decap olmadan JSON tabanli icerik yonetimi</p>
+            <h1 className="text-lg font-semibold tracking-tight">AK Hidrofor Yonetim Paneli</h1>
+            <p className="text-xs text-slate-300">Icerik, medya ve yedek yonetimi</p>
           </div>
           <button
             onClick={onLogout}
-            className="rounded-lg border border-slate-700 px-3 py-1.5 text-sm hover:bg-slate-800"
+            className="rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-1.5 text-sm hover:bg-slate-800"
           >
             Cikis
           </button>
         </div>
       </header>
-      <div className="w-full space-y-4 px-4 py-4">
+      <div className="mx-auto w-full max-w-[1400px] space-y-4 px-4 py-4">
         <TabNav activeTab={activeTab} onChange={setActiveTab} />
 
         {activeTab === "overview" ? (
           <OverviewCards
             contentCount={files.length}
-            draftCount={draftCount}
             mediaCount={mediaFiles.length}
             backupCount={backups.length}
           />
@@ -356,9 +392,8 @@ export default function AdminPage() {
             error={error}
             onFileSelect={selectFile}
             onDataChange={setEditorValue}
-            onSaveDraft={() => void mutateContent("saveDraft")}
-            onPublish={() => void mutateContent("publish")}
-            onDiscardDraft={() => void mutateContent("discardDraft")}
+            onPublish={() => void publishContent()}
+            hasChanges={hasChanges}
             onPickImage={openImagePicker}
           />
         ) : null}

@@ -9,7 +9,7 @@ type TabNavProps = {
 
 const tabs: { id: AdminTab; label: string }[] = [
   { id: "overview", label: "Genel Bakis" },
-  { id: "content", label: "Icerik" },
+  { id: "content", label: "Icerik Duzenle" },
   { id: "media", label: "Medya" },
   { id: "backups", label: "Yedekler" },
   { id: "settings", label: "Ayarlar" },
@@ -24,10 +24,10 @@ export function TabNav({ activeTab, onChange }: TabNavProps) {
             key={tab.id}
             type="button"
             onClick={() => onChange(tab.id)}
-            className={`rounded-lg px-3 py-2 text-sm transition ${
+            className={`rounded-lg border px-3 py-2 text-sm font-medium transition ${
               activeTab === tab.id
-                ? "bg-cyan-600 text-white"
-                : "border border-slate-700 text-slate-300 hover:bg-slate-800"
+                ? "border-blue-400/70 bg-blue-500/20 text-blue-100"
+                : "border-slate-700 text-slate-300 hover:border-slate-600 hover:bg-slate-800"
             }`}
           >
             {tab.label}

@@ -5,17 +5,26 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ScrollToTop from "@/components/ScrollToTop";
 
-export function SiteChrome() {
+type SiteChromeProps = {
+  children: React.ReactNode;
+};
+
+export function SiteChrome({ children }: SiteChromeProps) {
   const pathname = usePathname();
   const isAdmin = pathname.startsWith("/admin");
 
-  if (isAdmin) return null;
-
   return (
     <>
-      <Header />
-      <Footer />
-      <ScrollToTop />
+      {isAdmin ? (
+        <main className="flex-1">{children}</main>
+      ) : (
+        <>
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+          <ScrollToTop />
+        </>
+      )}
     </>
   );
 }

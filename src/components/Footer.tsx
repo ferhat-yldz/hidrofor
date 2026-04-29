@@ -1,11 +1,15 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { Phone, Mail, MapPin, ChevronRight } from "lucide-react";
 import { servicesData } from "@/config/data";
 import { getSite, telHref, mapsHref } from "@/lib/site";
+import { useLivePreviewFile } from "@/lib/adminLivePreview";
 
 export default function Footer() {
-  const { contact, agency } = getSite();
+  const site = useLivePreviewFile("site.json", getSite());
+  const { contact, agency } = site;
   const addressLines = contact.addressLabel.split("\n");
 
   return (

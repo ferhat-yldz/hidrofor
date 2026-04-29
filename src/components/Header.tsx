@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { Phone, ChevronDown, Menu, X, ArrowLeft } from "lucide-react";
 import { servicesData } from "@/config/data";
 import { getSite, telHref, waMeHref } from "@/lib/site";
+import { useLivePreviewFile } from "@/lib/adminLivePreview";
 
 const WhatsAppIcon = ({ className }: { className?: string }) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
@@ -17,7 +18,8 @@ const WhatsAppIcon = ({ className }: { className?: string }) => (
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
-  const { contact, topBar } = getSite();
+  const site = useLivePreviewFile("site.json", getSite());
+  const { contact, topBar } = site;
 
   useEffect(() => {
     if (isMenuOpen) {

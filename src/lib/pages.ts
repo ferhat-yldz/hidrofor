@@ -25,7 +25,7 @@ export function getArticlesFile(): ArticlesFile {
 }
 
 export function getArticles(): ArticleItem[] {
-  return (articlesFile as ArticlesFile).articles;
+  return getArticlesFile().articles;
 }
 
 export function getHomeFeaturedArticles(limit: number): ArticleItem[] {

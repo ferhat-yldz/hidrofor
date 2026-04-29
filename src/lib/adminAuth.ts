@@ -7,6 +7,7 @@ import {
   AUTH_STATE_FILE,
   DEFAULT_SESSION_TTL_MS,
 } from "@/lib/admin/constants";
+import { SUPABASE_TABLES, getSupabaseAdminClient, isSupabaseEnabled } from "@/lib/admin/supabase";
 
 type AuthState = {
   passwordHash: string;
@@ -114,6 +115,24 @@ function hashPassword(password: string, salt: string): Promise<string> {
 }
 
 async function readAuthState(): Promise<AuthState | null> {
+  if (isSupabaseEnabled()) {
+    const supabase = getSupabaseAdminClient();
+    const { data, error } = await supabase
+      .from(SUPABASE_TABLES.authState)
+      .select("password_hash,salt,session_version,updated_at")
+      .eq("id", 1)
+      .maybeSingle();
+    if (error) return null;
+    if (!data) return null;
+    if (!data.password_hash || !data.salt) return null;
+    return {
+      passwordHash: data.password_hash as string,
+      salt: data.salt as string,
+      sessionVersion: Number(data.session_version),
+      updatedAt: data.updated_at as string,
+    };
+  }
+
   try {
     const raw = await fs.readFile(AUTH_STATE_FILE, "utf8");
     return JSON.parse(raw) as AuthState;
@@ -143,6 +162,22 @@ export async function setAdminPassword(nextPassword: string) {
     sessionVersion,
     updatedAt: new Date().toISOString(),
   };
+
+  if (isSupabaseEnabled()) {
+    const supabase = getSupabaseAdminClient();
+    const { error } = await supabase.from(SUPABASE_TABLES.authState).upsert(
+      {
+        id: 1,
+        password_hash: payload.passwordHash,
+        salt: payload.salt,
+        session_version: payload.sessionVersion,
+        updated_at: payload.updatedAt,
+      },
+      { onConflict: "id" },
+    );
+    if (error) throw error;
+    return payload;
+  }
 
   await fs.mkdir(path.dirname(AUTH_STATE_FILE), { recursive: true });
   await fs.writeFile(AUTH_STATE_FILE, `${JSON.stringify(payload, null, 2)}\n`, "utf8");

@@ -5,11 +5,14 @@ import Link from "next/link";
 import { Phone, BookOpen, ChevronRight } from "lucide-react";
 import { servicesData } from "@/config/data";
 import { getSite, telHref } from "@/lib/site";
-import { getArticles } from "@/lib/pages";
+import { getArticlesFile } from "@/lib/pages";
+import { useLivePreviewFile } from "@/lib/adminLivePreview";
 
 export default function Bilgiler() {
-  const { contact } = getSite();
-  const articles = getArticles();
+  const site = useLivePreviewFile("site.json", getSite());
+  const articlesFile = useLivePreviewFile("articles.json", getArticlesFile());
+  const { contact } = site;
+  const articles = articlesFile.articles;
 
   return (
     <div className="bg-slate-50 font-sans text-slate-900 pb-20 md:pb-0">

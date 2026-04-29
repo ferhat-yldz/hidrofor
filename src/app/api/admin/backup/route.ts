@@ -11,23 +11,32 @@ type BackupBody = {
 export async function GET() {
   const authError = await requireAdmin();
   if (authError) return authError;
-  const backups = await listBackups();
-  return NextResponse.json({ backups });
+  try {
+    const backups = await listBackups();
+    return NextResponse.json({ backups });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Yedekler listelenemedi.";
+    return NextResponse.json({ message }, { status: 500 });
+  }
 }
 
 export async function POST(req: Request) {
   const authError = await requireAdminMutation(req);
   if (authError) return authError;
-
-  const body = (await req.json()) as BackupBody;
-  if (body.action === "restore") {
-    if (!body.backupId) {
-      return NextResponse.json({ message: "backupId gerekli." }, { status: 400 });
+  try {
+    const body = (await req.json()) as BackupBody;
+    if (body.action === "restore") {
+      if (!body.backupId) {
+        return NextResponse.json({ message: "backupId gerekli." }, { status: 400 });
+      }
+      await restoreBackup(body.backupId);
+      return NextResponse.json({ ok: true, message: "Yedek geri yuklendi." });
     }
-    await restoreBackup(body.backupId);
-    return NextResponse.json({ ok: true, message: "Yedek geri yuklendi." });
-  }
 
-  const backupId = await createBackup(body.label);
-  return NextResponse.json({ ok: true, backupId, message: "Yedek olusturuldu." });
+    const backupId = await createBackup(body.label);
+    return NextResponse.json({ ok: true, backupId, message: "Yedek olusturuldu." });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Yedek islemi basarisiz.";
+    return NextResponse.json({ message }, { status: 500 });
+  }
 }

@@ -3,9 +3,10 @@
 import { Quote, Medal } from "lucide-react";
 import { getKurumsalContent } from "@/lib/pages";
 import { CmsImage } from "@/components/CmsImage";
+import { useLivePreviewFile } from "@/lib/adminLivePreview";
 
 export default function Kurumsal() {
-  const k = getKurumsalContent();
+  const k = useLivePreviewFile("kurumsal.json", getKurumsalContent());
   const { hero, founder, hikaye, istatistikler } = k;
 
   return (

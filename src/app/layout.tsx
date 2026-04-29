@@ -30,10 +30,9 @@ export default function RootLayout({
   return (
     <html lang="tr" className="scroll-smooth">
       <body className={`${inter.className} flex flex-col min-h-screen`} suppressHydrationWarning>
-        <SiteChrome />
-        <main className="flex-1">
+        <SiteChrome>
           {children}
-        </main>
+        </SiteChrome>
       </body>
     </html>
   );

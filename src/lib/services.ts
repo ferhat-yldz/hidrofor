@@ -21,7 +21,7 @@ function recordToServiceWithIcon(record: ServiceRecord): ServiceWithIcon {
 }
 
 export function getServicesWithIcons(): ServiceWithIcon[] {
-  return (servicesFile.services as ServiceRecord[]).map(recordToServiceWithIcon);
+  return getServiceRecords().map(recordToServiceWithIcon);
 }
 
 export function getServiceRecords(): ServiceRecord[] {
